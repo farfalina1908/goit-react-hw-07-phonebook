@@ -1,17 +1,16 @@
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
-import { deleteContact, getContacts, getFilter } from '../../../redux/slicer';
+import { useSelector } from 'react-redux';
+import { getFilter } from '../../../redux/slicer';
 import Filter from '../Filter/Filter';
 import css from './ContactsList.module.css';
+import { useDeleteContactMutation } from '../../../redux/api';
 
-const ContactsList = () => {
-  const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+const ContactsList = ({ contacts }) => {
+  console.log(contacts);
+
+  const [deleteContact, { isLoading: isDeleting }] = useDeleteContactMutation();
+
   const filter = useSelector(getFilter);
-
-  const removeContact = contactId => {
-    dispatch(deleteContact(contactId));
-  };
 
   const filtredContact = () => {
     const normalizedFilter = filter.toLowerCase();
@@ -34,9 +33,9 @@ const ContactsList = () => {
             <button
               type="button"
               className={css.deleteButton}
-              onClick={() => removeContact(contact.id)}
+              onClick={() => deleteContact(contact.id)}
             >
-              Delete
+              {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
           </li>
         ))}

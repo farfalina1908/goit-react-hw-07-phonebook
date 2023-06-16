@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+// import { useDispatch, useSelector } from 'react-redux';
+import { useAddContactMutation, useGetContactsQuery } from '../../../redux/api';
 import { nanoid } from '@reduxjs/toolkit';
-import { addContact, getContacts } from '../../../redux/slicer';
+// import { addContact, getContacts } from '../../../redux/slicer';
 import Input from '../Input/Input';
 import Label from '../Label/Label';
 import css from './Form.module.css';
@@ -13,8 +14,11 @@ const Form = () => {
   const nameInputId = nanoid();
   const numberInputId = nanoid();
 
-  const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
+  // const dispatch = useDispatch();
+  // const contacts = useSelector(getContacts);
+
+  const { data: contacts } = useGetContactsQuery();
+  const [addContact, { isLoading }] = useAddContactMutation();
 
   const formReset = () => {
     setName('');
@@ -31,7 +35,7 @@ const Form = () => {
 
     contacts.find(contact => contact.name.toLowerCase() === name.toLowerCase())
       ? alert(`${name} is already in contacts`)
-      : dispatch(addContact(newContact));
+      : addContact(newContact);
     formReset();
   };
 
@@ -75,7 +79,7 @@ const Form = () => {
             onChange={handleChange}
           />
         </Label>
-        <button className={css.formButton} type="submit">
+        <button className={css.formButton} type="submit" disabled={isLoading}>
           Add
         </button>
       </form>
